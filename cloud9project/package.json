@@ -1,0 +1,32 @@
+{
+  "name": "kmd-blackboard",
+  "version": "1.0.0",
+  "description": "Cloud Computing Assigment 2",
+  "main": "app.js",
+  "dependencies": {
+    "cassandra-driver": "^3.5.0",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "nodemon": "^1.18.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/poukkyine-mdk/kmd-blackboard.git"
+  },
+  "keywords": [
+    "docker",
+    "nodejs",
+    "cassandra"
+  ],
+  "author": "poukkyine",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/poukkyine-mdk/kmd-blackboard/issues"
+  },
+  "homepage": "https://github.com/poukkyine-mdk/kmd-blackboard#readme"
+}
