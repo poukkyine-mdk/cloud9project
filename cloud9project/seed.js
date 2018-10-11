@@ -7,6 +7,8 @@ const client = new cassandra.Client({
 client.connect()
     //  .then(()=> client.execute("CREATE KEYSPACE kmd_blackboard WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy',  'datacenter1' : 2 } "))
     //  .then(() => client.execute("USE kmd_blackboard"))
+    
+    
     //  .then(() => client.execute("CREATE TABLE kmd_blackboard.users( username text PRIMARY KEY, password text)"))
     //  .then(() => client.execute("CREATE TABLE kmd_blackboard.courses_by_user(username text, courseCode text, courseName text, courseLecturer text, PRIMARY KEY(username,courseCode))"))
     //  .then(() => client.execute("CREATE TABLE kmd_blackboard.courses_by_code (coursecode text, coursename text, courselecturer text, PRIMARY KEY(coursecode))"))
@@ -44,12 +46,12 @@ client.connect()
 //     .then(() => client.execute("INSERT INTO kmd_blackboard.grades_by_username_code(username, coursecode, grades) VALUES ('pk','INFS7341',{'Assignment 1':'6','Mid Exam':'6','Final Exam':'7'})" ))
 //     .then(() => client.execute("INSERT INTO kmd_blackboard.grades_by_username_code(username, coursecode, grades) VALUES ('pk','INFS8341',{'Assignment 1':'6','Mid Exam':'6','Final Exam':'7'})" ))
 
-     .then(() => client.execute("INSERT INTO kmd_blackboard.assessment_info_by_coursecode(coursecode, posts) VALUES ('INFS2341',{'10/9/2018':'Dear students, the purpose of asssignment 2 is for creating cloud computing project without using any code.','11/9/2018':'There will be mutiple choices.','12/92018':'Final Exam'})" ))
-    .then(() => client.execute("INSERT INTO kmd_blackboard.assessment_info_by_coursecode(coursecode, posts) VALUES ('INFS3241',{'10/9/2018':'Dear students, the purpose of asssignment 2 is for creating cloud computing project without using any code.','11/9/2018':'There will be mutiple choices.','12/92018':'Final Exam'})" ))
-    .then(() => client.execute("INSERT INTO kmd_blackboard.assessment_info_by_coursecode(coursecode, posts) VALUES ('INFS5341',{'10/9/2018':'Dear students, the purpose of asssignment 2 is for creating cloud computing project without using any code.','11/9/2018':'There will be mutiple choices.','12/92018':'Final Exam'})" ))
-    .then(() => client.execute("INSERT INTO kmd_blackboard.assessment_info_by_coursecode(coursecode, posts) VALUES ('INFS6341',{'10/9/2018':'Dear students, the purpose of asssignment 2 is for creating cloud computing project without using any code.','11/9/2018':'There will be mutiple choices.','12/92018':'Final Exam'})" ))
-    .then(() => client.execute("INSERT INTO kmd_blackboard.assessment_info_by_coursecode(coursecode, posts) VALUES ('INFS7341',{'10/9/2018':'Dear students, the purpose of asssignment 2 is for creating cloud computing project without using any code.','11/9/2018':'There will be mutiple choices.','12/92018':'Final Exam'})" ))
-    .then(() => client.execute("INSERT INTO kmd_blackboard.assessment_info_by_coursecode(coursecode, posts) VALUES ('INFS8341',{'10/9/2018':'Dear students, the purpose of asssignment 2 is for creating cloud computing project without using any code.','11/9/2018':'There will be mutiple choices.','12/92018':'Final Exam'})" ))
+    //  .then(() => client.execute("INSERT INTO kmd_blackboard.assessment_info_by_coursecode(coursecode, posts) VALUES ('INFS2341',{'10/9/2018':'Dear students, the purpose of asssignment 2 is for creating cloud computing project without using any code.','11/9/2018':'There will be mutiple choices.','12/92018':'Final Exam'})" ))
+    // .then(() => client.execute("INSERT INTO kmd_blackboard.assessment_info_by_coursecode(coursecode, posts) VALUES ('INFS3241',{'10/9/2018':'Dear students, the purpose of asssignment 2 is for creating cloud computing project without using any code.','11/9/2018':'There will be mutiple choices.','12/92018':'Final Exam'})" ))
+    // .then(() => client.execute("INSERT INTO kmd_blackboard.assessment_info_by_coursecode(coursecode, posts) VALUES ('INFS5341',{'10/9/2018':'Dear students, the purpose of asssignment 2 is for creating cloud computing project without using any code.','11/9/2018':'There will be mutiple choices.','12/92018':'Final Exam'})" ))
+    // .then(() => client.execute("INSERT INTO kmd_blackboard.assessment_info_by_coursecode(coursecode, posts) VALUES ('INFS6341',{'10/9/2018':'Dear students, the purpose of asssignment 2 is for creating cloud computing project without using any code.','11/9/2018':'There will be mutiple choices.','12/92018':'Final Exam'})" ))
+    // .then(() => client.execute("INSERT INTO kmd_blackboard.assessment_info_by_coursecode(coursecode, posts) VALUES ('INFS7341',{'10/9/2018':'Dear students, the purpose of asssignment 2 is for creating cloud computing project without using any code.','11/9/2018':'There will be mutiple choices.','12/92018':'Final Exam'})" ))
+    // .then(() => client.execute("INSERT INTO kmd_blackboard.assessment_info_by_coursecode(coursecode, posts) VALUES ('INFS8341',{'10/9/2018':'Dear students, the purpose of asssignment 2 is for creating cloud computing project without using any code.','11/9/2018':'There will be mutiple choices.','12/92018':'Final Exam'})" ))
 
 
 
@@ -58,7 +60,7 @@ client.connect()
 
 
 
-//     .then(() => client.execute("DROP KEYSPACE kmd_blackboard") )
+    .then(() => client.execute("DROP KEYSPACE kmd_blackboard") )
     .then(() => client.shutdown())
     .catch(function(err) {
         console.log(err);

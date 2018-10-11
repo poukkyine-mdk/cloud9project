@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>KMD RateUs</title>
+        <title>KMD</title>
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="/app.css">    
@@ -18,7 +18,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/">KMD RateUs <i class="fas fa-star"></i></a>
+          <a class="navbar-brand" href="/">KMD <i class="fas fa-star"></i></a>
         </div>
     
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -34,6 +34,7 @@
               <% if(typeof(currentuser)=='undefined'){ %>
                 <li><a href="/login">Login</a></li>
               <% }else{ %>
+                <li><a href="#" style="color:green;"><%= currentuser %>&nbsp<i class="fa fa-user"></i></a></li>
                 <li><a href="/logout">Logout</a></li>
               <% } %>
                      

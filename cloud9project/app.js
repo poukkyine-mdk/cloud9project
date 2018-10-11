@@ -176,7 +176,6 @@ app.get("/courses/:id/grades", function(req, res) {
     client.execute("SELECT * FROM kmd_blackboard.grades_by_username_code WHERE username='" + username + "' AND coursecode='" + coursecode + "'",
       function(err, result) {
         if (!err) {
-          console.log(result)
           res.render("grades", {
             result: result
           })
@@ -193,21 +192,23 @@ app.get("/courses/:id/grades", function(req, res) {
 
 /* View Assessment Information */
 app.get("/courses/:id/assessments", function(req, res) {
-    if (req.session.username) {
-      var username=req.session.username;
-    var coursecode= req.params.id;
-    client.execute("SELECT * FROM kmd_blackboard.grades_by_username_code WHERE username='"+username+"' AND coursecode='" + coursecode + "'",
-    function (err, result) {
-      if (!err) {
-        console.log(result)
-        res.render("assessment", {
-          result:result
-        })
-      } else {
-        console.log(err);
-      }
-    })
-  }else{
+  if (req.session.username) {
+    var username = req.session.username;
+    var coursecode = req.params.id;
+    client.execute("SELECT * FROM kmd_blackboard.assessment_info_by_coursecode WHERE coursecode='" + coursecode + "'",
+      function(err, result) {
+        if (!err) {
+          console.log(result)
+          res.render("assessment", {
+            result: result
+          })
+        }
+        else {
+          console.log(err);
+        }
+      })
+  }
+  else {
     res.redirect("/login");
   }
 

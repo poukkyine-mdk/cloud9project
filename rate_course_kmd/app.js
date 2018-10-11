@@ -11,6 +11,7 @@ client.connect()
         return client.shutdown();
     });
 
+
 /* ************************************************** */
 /* Require packages, set up a few things */
 var express = require("express"),
@@ -34,6 +35,7 @@ app.use(express.static(__dirname + "/public"));
 /* *************************************************** */
 /* Landing */
 app.get("/", function(req, res) {
+
     res.render("landing");
 });
 /* *************************************************** */
@@ -41,13 +43,13 @@ app.get("/", function(req, res) {
 1. Admin Login => if username and pass is from admin then open route for /addstudents, /addcourses 
 2. Student Login => if from student then open route for /courses, /courses/:id get, /courses/:id post
 */
-
+var triedLogin = false;
 app.get("/login", function(req, res) {
     if (req.session.user == "admin") {
         res.redirect("/adminhome");
     }
     else {
-        res.render("login");
+        res.render("login", { triedLogin: triedLogin });
     }
 
 
@@ -55,22 +57,54 @@ app.get("/login", function(req, res) {
 
 app.post("/login", function(req, res) {
 
+    client.execute("SELECT * FROM kmd_rating.admins WHERE admin_username='" + req.body.username + "'AND admin_password='" + req.body.password + "' ALLOW FILTERING",
+        function(err, result) {
+            if (!err) {
 
-    client
-        .execute("SELECT * FROM kmd_rating.admins WHERE admin_username='" + req.body.username + "'",
-            function(err, result) {
-                if (!err) {
-
-                    if (req.body.username == result.rows[0].admin_username) {
-                        req.session.user = "admin";
-                        console.log(req.session.user)
-                        res.redirect("/adminhome")
-                    }
+                if (result.rowLength == 1) {
+                    req.session.user = "admin";
+                    console.log(req.session.user)
+                    res.redirect("/adminhome")
                 }
                 else {
-                    console.log(err);
+
+                    client.execute("SELECT * FROM kmd_rating.students WHERE student_id='" + req.body.username + "'AND student_password='" + req.body.password + "'ALLOW FILTERING",
+                        function(err, result) {
+                            if (!err) {
+
+                                if (result.rowLength == 1) {
+                                    req.session.user = req.body.username;
+                                    console.log(req.session.user)
+                                    res.redirect("/courses")
+                                }
+                                else {
+                                    triedLogin = true;
+                                    res.redirect("/login");
+                                }
+                            }
+                            else {
+                                console.log(err);
+                            }
+                        }
+                    )
+
                 }
-            })
+            }
+            else {
+                console.log(err);
+            }
+        })
+
+
+
+
+
+
+})
+app.get("/logout", function(req, res) {
+    req.session.destroy();
+    triedLogin = false;
+    res.redirect("/login")
 })
 
 /* *************************************************** */
@@ -85,7 +119,7 @@ app.get("/adminhome", function(req, res) {
 })
 /* *************************************************** */
 /* student crud page */
- var tried=false;
+var tried = false;
 app.get("/studentcrud", function(req, res) {
     if (req.session.user) {
 
@@ -93,8 +127,8 @@ app.get("/studentcrud", function(req, res) {
             .execute("SELECT * FROM kmd_rating.students",
                 function(err, result) {
                     if (!err) {
-                       
-                        res.render("studentcrud", { result: result, tried:tried})
+
+                        res.render("studentcrud", { result: result, tried: tried })
                     }
                     else {
                         console.log(err);
@@ -113,58 +147,58 @@ app.post("/studentcrud", function(req, res) {
         var studentpass = req.body.admin_pass;
 
         client
-            .execute("INSERT INTO kmd_rating.students (student_id,student_password) VALUES ('"+studentid+"','"+studentpass+"')",
+            .execute("INSERT INTO kmd_rating.students (student_id,student_password) VALUES ('" + studentid + "','" + studentpass + "')",
                 function(err, result) {
-                 
+
                     if (!err) {
-                        tried=false;
-                    res.redirect("/studentcrud")
+                        tried = false;
+                        res.redirect("/studentcrud")
                     }
 
                     else {
-                        tried=true;
-                             res.redirect("/studentcrud")
-                        
+                        tried = true;
+                        res.redirect("/studentcrud")
+
                     }
                 })
     }
 
     if (typeof(req.body.update_admin) != 'undefined') {
-         var studentid = req.body.admin_username;
+        var studentid = req.body.admin_username;
         var studentpass = req.body.admin_new_pass;
-  
+
         client
-            .execute("UPDATE kmd_rating.students SET student_password='"+studentpass+"' WHERE student_id='"+studentid+"'",
+            .execute("UPDATE kmd_rating.students SET student_password='" + studentpass + "' WHERE student_id='" + studentid + "'",
                 function(err, result) {
-                 
+
                     if (!err) {
-                        tried=false;
-                    res.redirect("/studentcrud")
+                        tried = false;
+                        res.redirect("/studentcrud")
                     }
 
                     else {
                         console.log(err);
-                        tried=true;
-                             res.redirect("/studentcrud")
-                        
+                        tried = true;
+                        res.redirect("/studentcrud")
+
                     }
                 })
     }
     if (typeof(req.body.delete_admin) != 'undefined') {
-        var studentid=req.body.admin_username;
+        var studentid = req.body.admin_username;
         client
-            .execute("DELETE FROM kmd_rating.students WHERE student_id='"+studentid+"' IF EXISTS; ",
+            .execute("DELETE FROM kmd_rating.students WHERE student_id='" + studentid + "' IF EXISTS; ",
                 function(err, result) {
-                 
+
                     if (!err) {
-                        tried=false;
-                    res.redirect("/studentcrud")
+                        tried = false;
+                        res.redirect("/studentcrud")
                     }
 
                     else {
-                        tried=true;
-                             res.redirect("/studentcrud")
-                        
+                        tried = true;
+                        res.redirect("/studentcrud")
+
                     }
                 })
     }
@@ -174,7 +208,7 @@ app.post("/studentcrud", function(req, res) {
 })
 /* *************************************************** */
 /* course crud page */
- var tried=false;
+var tried = false;
 app.get("/coursecrud", function(req, res) {
     if (req.session.user) {
 
@@ -182,8 +216,8 @@ app.get("/coursecrud", function(req, res) {
             .execute("SELECT * FROM kmd_rating.courses",
                 function(err, result) {
                     if (!err) {
-                       
-                        res.render("coursecrud", { result: result, tried:tried})
+
+                        res.render("coursecrud", { result: result, tried: tried })
                     }
                     else {
                         console.log(err);
@@ -201,19 +235,19 @@ app.post("/coursecrud", function(req, res) {
         var coursename = req.body.admin_pass;
 
         client
-            .execute("INSERT INTO kmd_rating.courses (course_id,course_name) VALUES ('"+courseid+"','"+coursename+"')",
+            .execute("INSERT INTO kmd_rating.courses (course_id,course_name) VALUES ('" + courseid + "','" + coursename + "')",
                 function(err, result) {
-                 
+
                     if (!err) {
-                        tried=false;
-                    res.redirect("/coursecrud")
+                        tried = false;
+                        res.redirect("/coursecrud")
                     }
 
                     else {
                         console.log(err);
-                        tried=true;
-                             res.redirect("/coursecrud")
-                        
+                        tried = true;
+                        res.redirect("/coursecrud")
+
                     }
                 })
     }
@@ -221,45 +255,108 @@ app.post("/coursecrud", function(req, res) {
     if (typeof(req.body.update_admin) != 'undefined') {
         var courseid = req.body.admin_username;
         var coursename = req.body.admin_new_pass;
-  
+
         client
-            .execute("UPDATE kmd_rating.courses SET course_name='"+coursename+"' WHERE course_id='"+courseid+"'",
+            .execute("UPDATE kmd_rating.courses SET course_name='" + coursename + "' WHERE course_id='" + courseid + "'",
                 function(err, result) {
-                 
+
                     if (!err) {
-                        tried=false;
-                    res.redirect("/coursecrud")
+                        tried = false;
+                        res.redirect("/coursecrud")
                     }
 
                     else {
                         console.log(err);
-                        tried=true;
-                             res.redirect("/coursecrud")
-                        
+                        tried = true;
+                        res.redirect("/coursecrud")
+
                     }
                 })
     }
     if (typeof(req.body.delete_admin) != 'undefined') {
-        var courseid=req.body.admin_username;
+        var courseid = req.body.admin_username;
         client
-            .execute("DELETE FROM kmd_rating.courses WHERE course_id='"+courseid+"' IF EXISTS; ",
+            .execute("DELETE FROM kmd_rating.courses WHERE course_id='" + courseid + "' IF EXISTS; ",
                 function(err, result) {
-                 
+
                     if (!err) {
-                        tried=false;
-                    res.redirect("/coursecrud")
+                        tried = false;
+                        res.redirect("/coursecrud")
                     }
 
                     else {
                         console.log(err);
-                        tried=true;
-                             res.redirect("/coursecrud")
-                        
+                        tried = true;
+                        res.redirect("/coursecrud")
+
                     }
                 })
     }
 
 
+
+})
+/* *************************************************** */
+app.get("/courses", function(req, res) {
+
+
+
+    if (req.session.user) {
+        //select from search
+        if (typeof(req.query.q) != "undefined") {
+
+            client.execute("SELECT * FROM kmd_rating.courses WHERE course_id='" + req.query.q + "'", function(err, result) {
+                if (!err) {
+
+                    res.render("courses", { result: result })
+                }
+                else {
+                    res.redirect("/courses")
+                    console.log(err);
+                }
+            })
+
+        }
+        else { //Select from all
+
+            client.execute("SELECT * FROM kmd_rating.courses LIMIT 500", function(err, result) {
+                if (!err) {
+
+                    res.render("courses", { result: result })
+                }
+                else {
+                    res.redirect("/courses")
+                    console.log(err);
+                }
+
+            })
+
+        }
+
+    }
+    else {
+        res.redirect("/login")
+    }
+
+})
+
+app.get("/courses/:id",function(req, res) {
+    if(req.session.user){
+           var courseid=req.params.id;
+           var semester;
+           var academicyear;
+           var studentid;
+           client.execute("SELECT * FROM kmd_rating.courses WHERE course_id='"+courseid+"'",function(err, result) {
+               if(!err){
+                   res.render("rate",{result:result})
+               }else{
+                   
+               }
+              
+           })
+    }else{
+        res.redirect("/login")
+    }
 
 })
 /* *************************************************** */
