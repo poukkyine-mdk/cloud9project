@@ -34,7 +34,7 @@
               <% if(typeof(currentuser)=='undefined'){ %>
                 <li><a href="/login">Login</a></li>
               <% }else{ %>
-                <li><a href="#" style="color:green;"><%= currentuser %>&nbsp<i class="fa fa-user"></i></a></li>
+                <li><a href="/profile/<%= currentuser %>" style="color:green;"><%= currentuser %>&nbsp<i class="fa fa-user"></i></a></li>
                 <li><a href="/logout">Logout</a></li>
               <% } %>
                      

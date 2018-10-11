@@ -38,6 +38,22 @@ app.get("/", function(req, res) {
 
     res.render("landing");
 });
+
+app.get("/profile/:id",function(req, res) {
+     if (req.session.user) {
+         client.execute("SELECT * FROM kmd_rating.ratings WHERE student_id='"+req.session.user+"' ALLOW FILTERING",function(err, result) {
+             if(!err){
+                  res.render("profile",{result:result})
+             }else{
+                 console.log(err);
+             }
+         })
+       
+    }
+    else {
+        res.redirect("/login")
+    }
+})
 /* *************************************************** */
 /* login 
 1. Admin Login => if username and pass is from admin then open route for /addstudents, /addcourses 
@@ -340,6 +356,7 @@ app.get("/courses", function(req, res) {
 
 })
 
+var triedFeedback=false;
 app.get("/courses/:id",function(req, res) {
     if(req.session.user){
            var courseid=req.params.id;
@@ -348,7 +365,10 @@ app.get("/courses/:id",function(req, res) {
            var studentid;
            client.execute("SELECT * FROM kmd_rating.courses WHERE course_id='"+courseid+"'",function(err, result) {
                if(!err){
-                   res.render("rate",{result:result})
+                   res.render("rate",{result:result,
+                       
+                       triedFeedback:triedFeedback
+                   })
                }else{
                    
                }
@@ -358,6 +378,33 @@ app.get("/courses/:id",function(req, res) {
         res.redirect("/login")
     }
 
+})
+app.post("/courses/:id",function(req, res) {
+  var courseid= req.params.id, 
+  semester=req.body.semester, 
+  academicyear=req.body.academicyear, 
+  studentid=req.session.user, 
+  courselecturer=req.body.lecturer, 
+  coursename=req.body.coursename, 
+  feedback=req.body.feedback, 
+  rating=req.body.rating, 
+  studentemail=req.body.studentemail;
+  
+  client.execute("INSERT INTO kmd_rating.ratings (course_code, semester, academic_year, student_id, course_lecturer, course_name, feedback, rating, student_email) VALUES ('"+courseid+"','"+semester+"','"+academicyear+"','"+studentid+"','"+courselecturer+"','"+coursename+"','"+feedback+"',"+rating+",'"+studentemail+"')",function(err, result) {
+      if(!err){
+          console.log(result);
+          res.redirect("/thankyou")
+      }
+      else{
+          triedFeedback=true;
+          res.redirect("/courses/"+courseid)
+          console.log(err);
+      }
+  })
+})
+
+app.get("/thankyou",function(req, res) {
+    res.render("thankyou")
 })
 /* *************************************************** */
 app.listen(8080, process.env.IP, function() {
